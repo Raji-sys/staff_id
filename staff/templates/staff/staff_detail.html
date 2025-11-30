@@ -1,0 +1,140 @@
+{% extends "staff/base.html" %}
+
+{% block title %}{{ staff.get_full_name }} - {{ HOSPITAL_NAME }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="{% url 'staff:staff_list' %}" class="text-blue-600 hover:text-blue-700 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Staff List
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Info -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="flex items-start space-x-4">
+                            {% if staff.photo %}
+                            <img src="{{ staff.photo.url }}" 
+                                 alt="{{ staff.get_full_name }}"
+                                 class="w-24 h-24 rounded-lg object-cover border-2 border-gray-200">
+                            {% else %}
+                            <div class="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user text-4xl text-gray-400"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-900">{{ staff.get_full_name }}</h1>
+                                <p class="text-lg text-gray-600 mt-1">{{ staff.position }}</p>
+                                <p class="text-sm text-gray-500 mt-1">{{ staff.staff_id }}</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                            {% if staff.status == 'active' and not staff.is_expired %}bg-green-100 text-green-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ staff.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Department</label>
+                            <p class="text-lg text-gray-900 mt-1">{{ staff.get_department_display }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Date Joined</label>
+                            <p class="text-lg text-gray-900 mt-1">{{ staff.date_joined|date:"d M Y" }}</p>
+                        </div>
+                        {% if staff.email %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Email</label>
+                            <p class="text-lg text-gray-900 mt-1">{{ staff.email }}</p>
+                        </div>
+                        {% endif %}
+                        {% if staff.phone %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Phone</label>
+                            <p class="text-lg text-gray-900 mt-1">{{ staff.phone }}</p>
+                        </div>
+                        {% endif %}
+                        {% if staff.date_expiry %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Valid Until</label>
+                            <p class="text-lg {% if staff.is_expired %}text-red-600{% else %}text-gray-900{% endif %} mt-1">
+                                {{ staff.date_expiry|date:"d M Y" }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-gray-200 flex space-x-4">
+                        <a href="{% url 'staff:staff_edit' staff.uuid %}" 
+                           class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </a>
+                        <a href="{% url 'staff:download_qr_sticker' staff.uuid %}" 
+                           class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+                            <i class="fas fa-download mr-2"></i>QR Sticker
+                        </a>
+                        <a href="{% url 'staff:print_card' staff.uuid %}" 
+                           target="_blank"
+                           class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+                            <i class="fas fa-print mr-2"></i>Print Card
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Verifications -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-history text-blue-600 mr-2"></i>Recent Verifications
+                    </h2>
+                    {% if recent_verifications %}
+                    <div class="space-y-3">
+                        {% for log in recent_verifications %}
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                            <div>
+                                <p class="text-sm text-gray-900">{{ log.verified_at|date:"d M Y, h:i A" }}</p>
+                                <p class="text-xs text-gray-500">IP: {{ log.ip_address }}</p>
+                                <p class="text-xs text-gray-500">Verified by: {{ verification_log.verified_by.get_full_name|default:verification_log.verified_by.username|default:"Anonymous" }}
+</p>    
+<p class="text-sm text-gray-600">
+    Verified on: {{ verification_log.verified_at }}
+</p>
+                            </div>
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-500 text-center py-4">No verifications yet</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">QR Code</h2>
+                    {% if staff.qr_code %}
+                    <img src="{{ staff.qr_code.url }}" 
+                         alt="QR Code"
+                         class="w-full border-4 border-gray-200 rounded-lg">
+                    {% else %}
+                    <div class="w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-qrcode text-6xl text-gray-300"></i>
+                    </div>
+                    {% endif %}
+                    <p class="text-sm text-gray-600 mt-4 text-center">
+                        Scan to verify this staff member
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

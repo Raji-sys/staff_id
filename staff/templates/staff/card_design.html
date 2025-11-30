@@ -1,0 +1,58 @@
+<div class="relative w-full h-full border-4 border-blue-600 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-white">
+    <!-- Header -->
+    <div class="bg-blue-600 text-white text-center py-2">
+        <p class="text-xs font-bold">{{ settings.HOSPITAL_NAME|upper }}</p>
+        <p class="text-[0.5rem]">STAFF IDENTIFICATION</p>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="p-3 flex gap-3">
+        <!-- Photo -->
+        <div class="flex-shrink-0">
+            {% if staff.photo %}
+                <img src="{{ staff.photo.url }}" 
+                     alt="{{ staff.get_full_name }}"
+                     class="w-20 h-24 object-cover rounded border-2 border-blue-300">
+            {% else %}
+                <div class="w-20 h-24 bg-gray-200 rounded flex items-center justify-center border-2 border-blue-300">
+                    <i class="fas fa-user text-3xl text-gray-400"></i>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Details -->
+        <div class="flex-1 text-[0.6rem] space-y-1">
+            <div>
+                <p class="font-bold text-gray-900 text-xs">{{ staff.get_full_name|upper }}</p>
+                <p class="text-blue-700 font-semibold">{{ staff.staff_id }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">{{ staff.get_department_display }}</p>
+                <p class="text-gray-600">{{ staff.position }}</p>
+            </div>
+            {% if staff.date_expiry %}
+            <p class="text-red-600 font-semibold">
+                Valid: {{ staff.date_expiry|date:"m/Y" }}
+            </p>
+            {% endif %}
+        </div>
+        
+        <!-- QR Code -->
+        <div class="flex-shrink-0">
+            {% if staff.qr_code %}
+            <img src="{{ staff.qr_code.url }}" 
+                 alt="QR Code"
+                 class="w-20 h-20 border border-gray-300 rounded">
+            {% else %}
+            <div class="w-20 h-20 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-qrcode text-2xl text-gray-400"></i>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="absolute bottom-1 left-0 right-0 text-center">
+        <p class="text-[0.45rem] text-gray-500">Scan QR code for verification</p>
+    </div>
+</div>

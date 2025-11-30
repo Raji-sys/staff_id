@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: 80mm 80mm;
+            margin: 5mm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        
+        .sticker {
+            width: 70mm;
+            height: 70mm;
+            border: 2px dashed #ccc;
+            padding: 5mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-code {
+            width: 50mm;
+            height: 50mm;
+            margin-bottom: 2mm;
+        }
+        
+        .staff-info {
+            font-size: 10pt;
+            font-weight: bold;
+            margin-bottom: 1mm;
+        }
+        
+        .staff-id {
+            font-size: 9pt;
+            color: #666;
+        }
+        
+        .hospital-name {
+            font-size: 8pt;
+            color: #333;
+            margin-top: 1mm;
+        }
+        
+        .scan-text {
+            font-size: 7pt;
+            color: #999;
+            margin-top: 2mm;
+        }
+    </style>
+</head>
+<body>
+    <div class="hospital-name">National Orthopaedic Hospital, Dala</div>
+    <div class="scan-text">Scan to verify</div>
+    <div class="sticker">
+        {% if staff.qr_code %}
+        <img src="{{ request.scheme }}://{{ request.get_host }}{{ staff.qr_code.url }}" class="qr-code" alt="QR Code">
+        {% endif %}
+        
+        <div class="staff-info">{{ staff.get_full_name }} - {{ staff.staff_id }}</div>
+    </div>
+</body>
+</html>

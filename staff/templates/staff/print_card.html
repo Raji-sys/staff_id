@@ -1,0 +1,59 @@
+{% extends "staff/base.html" %}
+
+{% block title %}Print ID Card - {{ staff.get_full_name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    @page {
+        size: 3.375in 2.125in; /* Standard CR80 card size */
+        margin: 0;
+    }
+    
+    @media print {
+        body { 
+            margin: 0; 
+            padding: 0;
+        }
+        .print-card {
+            width: 3.375in;
+            height: 2.125in;
+            page-break-after: always;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="p-8 no-print">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-id-card mr-2"></i>Print ID Card
+                </h1>
+                <button onclick="window.print()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                    <i class="fas fa-print mr-2"></i>Print Card
+                </button>
+            </div>
+            <p class="text-gray-600">
+                <i class="fas fa-info-circle mr-2"></i>
+                This will print a standard CR80 size card (3.375" × 2.125"). 
+                For stickers, print and cut along the guidelines.
+            </p>
+        </div>
+        
+        <!-- Print Preview -->
+        <div class="bg-gray-100 p-8 rounded-lg">
+            <div class="bg-white mx-auto" style="width: 3.375in; height: 2.125in;">
+                {% include "staff/card_design.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actual Print Content -->
+<div class="print-card" style="display: none;">
+    {% include "staff/card_design.html" %}
+</div>
+{% endblock %}
