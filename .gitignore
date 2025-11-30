@@ -1,54 +1,48 @@
-# .gitignore
-.env
-*.pyc
-__pycache__/
-db.sqlite3
-media/
-staticfiles/
+# Environment & Secrets
+.env*
+!.env.example
 
-# Python Virtual Environment
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+env/
+ENV/
 include/
 share/
 bin/
 lib/
 lib64/
 pyvenv.cfg
-*.cfg
-
-# Python Bytecode
-*.pyc
-*.pyo
-*.pyd
-**/__pycache__/
+pip-selfcheck.json
 
 # Django
 db.sqlite3
-run.sh
-staticfiles/
-media/
+db.sqlite3-journal
+/media/
+/staticfiles/
 *.log
+local_settings.py
 
-# Python Package Files
-*.egg-info/
-*.egg
-dist/
-build/
-
-# Environment Variables
-.env
-.env.local
-.env.development
-.env.test
-.env.production
-
-# IDE/Editor Files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.project
+.pydevproject
 
-# OS Files
+# OS
 .DS_Store
 .DS_Store?
 ._*
@@ -56,30 +50,20 @@ build/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Node.js (for Django Tailwind)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Coverage Reports
+# Testing
 htmlcov/
+.tox/
 .coverage
 .coverage.*
+.pytest_cache/
+.mypy_cache/
+nosetests.xml
 coverage.xml
 *.cover
 
-# Pytest
-.pytest_cache/
-
-# mypy
-.mypy_cache/
-
-# Logs
-*.log
-logs/
-
-# Temporary Files
-*.tmp
-*.temp
+# Node (if using)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
