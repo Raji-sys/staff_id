@@ -5,18 +5,34 @@
 {% block extra_head %}
 <style>
     @page {
-        size: 3.375in 2.125in; /* Standard CR80 card size */
+        /* Portrait CR80 card size: Reverse of standard (Width x Height) */
+        size: 2.125in 3.375in; 
         margin: 0;
     }
     
+    /* Rules for the screen view (the default) */
+    .print-card-container {
+        display: none !important; /* Hide the final print version on screen */
+    }
+    
     @media print {
+        /* Print-specific styles */
         body { 
             margin: 0; 
             padding: 0;
         }
+        .no-print {
+            display: none !important; /* Hide the page header/button when printing */
+        }
+        .print-card-container {
+            display: block !important; /* Show the final print version when printing */
+        }
         .print-card {
-            width: 3.375in;
-            height: 2.125in;
+            width: 2.125in;
+            height: 3.375in;
+            margin: 0;
+            padding: 0;
+            /* Key change: Force a page break after each side */
             page-break-after: always;
         }
     }
@@ -29,7 +45,7 @@
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
                 <h1 class="text-2xl font-bold text-gray-900">
-                    <i class="fas fa-id-card mr-2"></i>Print ID Card
+                    <i class="fas fa-id-card mr-2"></i>Print ID Card (Front & Back)
                 </h1>
                 <button onclick="window.print()" 
                         class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
@@ -38,22 +54,42 @@
             </div>
             <p class="text-gray-600">
                 <i class="fas fa-info-circle mr-2"></i>
-                This will print a standard CR80 size card (3.375" × 2.125"). 
-                For stickers, print and cut along the guidelines.
+                This will print the **Front and Back** of the Portrait CR80 card (2.125" × 3.375") on two separate pages.
             </p>
         </div>
         
-        <!-- Print Preview -->
-        <div class="bg-gray-100 p-8 rounded-lg">
-            <div class="bg-white mx-auto" style="width: 3.375in; height: 2.125in;">
-                {% include "staff/card_design.html" %}
+        <div class="bg-gray-100 p-8 rounded-lg space-y-6">
+            <h2 class="text-xl font-semibold text-center">Card Front Preview</h2>
+            <div class="bg-white mx-auto shadow-xl" style="width: 2.125in; height: 3.375in; border: 1px solid #ccc;">
+                {# Pass 'side' variable to render the front #}
+                {% with side='front' %}
+                    {% include "staff/card_design.html" %}
+                {% endwith %}
+            </div>
+            
+            <h2 class="text-xl font-semibold text-center pt-4">Card Back Preview</h2>
+            <div class="bg-white mx-auto shadow-xl" style="width: 2.125in; height: 3.375in; border: 1px solid #ccc;">
+                {# Pass 'side' variable to render the back #}
+                {% with side='back' %}
+                    {% include "staff/card_design.html" %}
+                {% endwith %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Actual Print Content -->
-<div class="print-card" style="display: none;">
-    {% include "staff/card_design.html" %}
+<div class="print-card-container">
+    <div class="print-card">
+        {# Print Front #}
+        {% with side='front' %}
+            {% include "staff/card_design.html" %}
+        {% endwith %}
+    </div>
+    <div class="print-card">
+        {# Print Back #}
+        {% with side='back' %}
+            {% include "staff/card_design.html" %}
+        {% endwith %}
+    </div>
 </div>
 {% endblock %}

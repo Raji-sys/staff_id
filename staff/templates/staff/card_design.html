@@ -1,58 +1,79 @@
-<div class="relative w-full h-full border-4 border-blue-600 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-white">
-    <!-- Header -->
-    <div class="bg-blue-600 text-white text-center py-2">
-        <p class="text-xs font-bold">{{ settings.HOSPITAL_NAME|upper }}</p>
-        <p class="text-[0.5rem]">STAFF IDENTIFICATION</p>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="p-3 flex gap-3">
-        <!-- Photo -->
-        <div class="flex-shrink-0">
-            {% if staff.photo %}
-                <img src="{{ staff.photo.url }}" 
-                     alt="{{ staff.get_full_name }}"
-                     class="w-20 h-24 object-cover rounded border-2 border-blue-300">
-            {% else %}
-                <div class="w-20 h-24 bg-gray-200 rounded flex items-center justify-center border-2 border-blue-300">
-                    <i class="fas fa-user text-3xl text-gray-400"></i>
+{% comment %} 
+This single template renders either the front or the back of the ID card 
+based on the 'side' context variable passed from the parent template.
+{% endcomment %}
+
+{% if side == 'front' %}
+
+    {# --- ID CARD FRONT DESIGN --- #}
+    <div class="relative w-[2.125in] h-[3.375in] border-2 border-blue-600 rounded-lg overflow-hidden bg-gradient-to-b from-blue-50 to-white shadow-xl">
+        
+        <div class="bg-blue-600 text-white text-center py-2 px-1">
+            <p class="text-xs font-black">{{ settings.HOSPITAL_NAME|upper }}</p>
+            <p class="text-[0.6rem] font-medium">STAFF IDENTIFICATION</p>
+        </div>
+        
+        <div class="p-3 flex flex-col items-center space-y-2">
+            
+            <div class="flex-shrink-0">
+                {% if staff.photo %}
+                    <img src="{{ staff.photo.url }}" 
+                         alt="{{ staff.get_full_name }}"
+                         class="w-24 h-28 object-cover rounded-md border-3 border-blue-400 shadow-md">
+                {% else %}
+                    <div class="w-24 h-28 bg-gray-200 rounded-md flex items-center justify-center border-3 border-blue-400 shadow-md">
+                        <i class="fas fa-user text-4xl text-gray-500"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="text-center w-full space-y-1 mt-2">
+                <div>
+                    <p class="font-extrabold text-gray-900 text-sm leading-tight">{{ staff.get_full_name|upper }}</p>
+                    <p class="text-blue-700 font-bold text-xs">{{ staff.staff_id }}</p>
                 </div>
-            {% endif %}
+                <div class="text-[0.65rem] space-y-0">
+                    <p class="text-gray-700 font-medium">{{ staff.get_department_display }}</p>
+                    <p class="text-gray-700 font-medium">{{ staff.position }}</p>
+                </div>
+                {% if staff.date_expiry %}
+                <p class="text-red-600 font-bold text-xs mt-1">
+                    Valid Thru: {{ staff.date_expiry|date:"m/Y" }}
+                </p>
+                {% endif %}
+            </div>
+            
         </div>
         
-        <!-- Details -->
-        <div class="flex-1 text-[0.6rem] space-y-1">
-            <div>
-                <p class="font-bold text-gray-900 text-xs">{{ staff.get_full_name|upper }}</p>
-                <p class="text-blue-700 font-semibold">{{ staff.staff_id }}</p>
-            </div>
-            <div>
-                <p class="text-gray-600">{{ staff.get_department_display }}</p>
-                <p class="text-gray-600">{{ staff.position }}</p>
-            </div>
-            {% if staff.date_expiry %}
-            <p class="text-red-600 font-semibold">
-                Valid: {{ staff.date_expiry|date:"m/Y" }}
-            </p>
-            {% endif %}
+        <div class="absolute bottom-1.5 left-0 right-0 text-center">
+            <p class="text-[0.5rem] text-gray-500 font-medium">This ID is the property of {{ settings.HOSPITAL_NAME }}.</p>
         </div>
+    </div>
+
+{% else %} 
+    
+    {# --- ID CARD BACK DESIGN --- #}
+    <div class="relative w-[2.125in] h-[3.375in] border-2 border-gray-400 rounded-lg overflow-hidden bg-white shadow-xl flex flex-col justify-between p-3">
         
-        <!-- QR Code -->
-        <div class="flex-shrink-0">
+        <div class="flex-grow flex items-center justify-center flex-col space-y-2 pt-4">
+            <p class="text-xs font-bold text-gray-700 uppercase">Verification Code</p>
             {% if staff.qr_code %}
             <img src="{{ staff.qr_code.url }}" 
                  alt="QR Code"
-                 class="w-20 h-20 border border-gray-300 rounded">
+                 class="w-24 h-24 border border-gray-300 rounded p-1">
             {% else %}
-            <div class="w-20 h-20 bg-gray-200 flex items-center justify-center rounded">
-                <i class="fas fa-qrcode text-2xl text-gray-400"></i>
+            <div class="w-24 h-24 bg-gray-200 flex items-center justify-center rounded border border-gray-300">
+                <i class="fas fa-qrcode text-3xl text-gray-500"></i>
             </div>
             {% endif %}
+            <p class="text-[0.55rem] text-blue-600 font-semibold mt-1">Scan to verify authenticity.</p>
+        </div>
+        
+        <div class="text-center text-[0.6rem] space-y-1 pb-1">
+            <p class="font-bold text-gray-800 border-t pt-1 mt-auto">IN CASE OF EMERGENCY</p>
+            <p>Contact: {{ settings.HOSPITAL_CONTACT_PHONE }}</p>
+            <p>{{ settings.HOSPITAL_ADDRESS }}</p>
         </div>
     </div>
-    
-    <!-- Footer -->
-    <div class="absolute bottom-1 left-0 right-0 text-center">
-        <p class="text-[0.45rem] text-gray-500">Scan QR code for verification</p>
-    </div>
-</div>
+
+{% endif %}

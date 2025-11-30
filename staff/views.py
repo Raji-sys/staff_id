@@ -11,7 +11,12 @@ from xhtml2pdf import pisa
 from .models import Staff, VerificationLog
 from .utils import get_client_ip
 from .forms import StaffForm
+from django.template.loader import get_template
+from io import BytesIO
+from xhtml2pdf import pisa 
+from django.conf import settings
 
+@login_required
 @require_http_methods(["GET"])
 def home(request):
     """Landing page"""
@@ -164,3 +169,34 @@ def download_qr_sticker(request, uuid):
         return HttpResponse('PDF generation error', status=500)
     
     return response
+
+
+def render_to_pdf(template_src, context_dict={}):
+    """Converts HTML template to PDF object."""
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+def download_card_pdf(request, uuid):
+    """Generates the ID card PDF (Front and Back) and forces a download."""
+    staff = get_object_or_404(Staff, uuid=uuid)
+    
+    context = {
+        'staff': staff,
+        'settings': settings, 
+    }
+    
+    pdf_content = render_to_pdf('staff/card_pdf_output.html', context)
+    
+    if pdf_content:
+        response = pdf_content
+        response['Content-Disposition'] = f'inline; filename="ID_Card_{staff.staff_id}.pdf"'
+        return response
+    
+    return HttpResponse("Error generating PDF.", status=500)

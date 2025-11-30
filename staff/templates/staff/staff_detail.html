@@ -81,10 +81,13 @@
                             <i class="fas fa-download mr-2"></i>QR Sticker
                         </a>
                         <a href="{% url 'staff:print_card' staff.uuid %}" 
-                           target="_blank"
                            class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition">
                             <i class="fas fa-print mr-2"></i>Print Card
                         </a>
+                        <!-- <a href="{% url 'staff:download_card_pdf' staff.uuid %}" 
+                           class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+                            <i class="fas fa-file-pdf mr-2"></i>Download PDF Card
+                        </a> -->
                     </div>
                 </div>
 

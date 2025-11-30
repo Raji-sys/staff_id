@@ -1,7 +1,6 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 import uuid
-from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
@@ -83,7 +82,6 @@ class Staff(models.Model):
             self.qr_code = qr_path
             super().save(update_fields=['qr_code'])
 
-from django.contrib.auth.models import User
 
 class VerificationLog(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='verification_logs')

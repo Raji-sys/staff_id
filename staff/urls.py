@@ -12,4 +12,5 @@ urlpatterns = [
     path('staff/<uuid:uuid>/qr-sticker/', views.download_qr_sticker, name='download_qr_sticker'),
     path('verify/<uuid:uuid>/', views.verify_staff, name='verify'),
     path('print/<uuid:uuid>/', views.print_card, name='print_card'),
+    path('staff/<uuid:uuid>/download-pdf/', views.download_card_pdf, name='download_card_pdf'),
 ]
